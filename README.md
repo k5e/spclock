@@ -1,6 +1,6 @@
-bootplate
-=========
+Speaker's Clock
+===============
 
-Application template for packaged Enyo
+A small countdown app that helps speakers to watch their time.
 
-Refer to the [Wiki](https://github.com/enyojs/enyo/wiki/Bootplate) for how to get started.
+Built from scratch and with [Enyo.js](http://enyojs.com/) on the FirefoxOS App Day in Berlin.
