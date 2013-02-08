@@ -1,4 +1,3 @@
-
 // minifier: path aliases
 
 enyo.path.addPaths({layout: "C://projects/de/k5e/spclock/enyo/../lib/layout/", onyx: "C://projects/de/k5e/spclock/enyo/../lib/onyx/", onyx: "C://projects/de/k5e/spclock/enyo/../lib/onyx/source/"});
@@ -3524,7 +3523,8 @@ name: "timeDisplay",
 fit: !0,
 classes: "time-display",
 allowHtml: !0,
-onresize: "displayResized"
+onresize: "displayResized",
+ontap: "startClock"
 }, {
 kind: "onyx.ProgressBar",
 name: "progress",
