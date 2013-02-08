@@ -4,11 +4,11 @@
     "description": "A small countdown app that helps speakers to watch their time.",
     "launch_path": "index.html",
     "icons": {
-        "16": "icon-16.png",
-        "32": "icon-32.png",
-        "64": "icon-64.png",
-        "128": "icon-128.png",
-        "256": "icon-256.png"
+        "16": "assets/icon-16.png",
+        "32": "assets/icon-32.png",
+        "64": "assets/icon-64.png",
+        "128": "assets/icon-128.png",
+        "256": "assets/icon-256.png"
     },
     "developer": {
         "name": "Christian Knappke",
