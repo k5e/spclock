@@ -3542,12 +3542,14 @@ ontap: "startClock"
 kind: "onyx.Button",
 name: "buttonPlus",
 content: "+",
-ontap: "plusOne"
+ondown: "plusButtonDown",
+ontap: "plusButtonUp"
 }, {
 kind: "onyx.Button",
 name: "buttonMinus",
 content: "-",
-ontap: "minusOne"
+ondown: "minusButtonDown",
+ontap: "minusButtonUp"
 }, {
 kind: "onyx.Button",
 name: "buttonReset",
@@ -3566,13 +3568,16 @@ timeSet: 0,
 timeMax: 5940,
 timeDefault: 1200,
 timeOut: 1e3,
+plusMinusTimeout: 150,
 timer: null,
+plusTimer: null,
+minusTimer: null,
 timePercentGreen: 50,
 timePercentYellow: 70,
 timePercentRed: 90,
 barStyle: null,
 create: function() {
-this.inherited(arguments), this.barStyle = document.createElement("style"), this.barStyle.type = "text/css", this.barStyle.innerHTML = ".bar-color { background: grey; }", this.timeSet = this.timeDefault, this.theTime = this.timeDefault, this.displayTime(this.theTime), this.displayResized();
+this.inherited(arguments), this.$.progress.$.bar.applyStyle("border-radius", "0px 7px 7px 0px"), this.timeSet = this.timeDefault, this.theTime = this.timeDefault, this.displayTime(this.theTime), this.displayResized();
 },
 displayResized: function(e, t) {
 var n = 0, r = 0, i = "", s = window.innerHeight - 176, o = window.innerWidth - 80;
@@ -3580,7 +3585,7 @@ n = Math.floor(o / 2.5), n > s && (n = s), r = Math.floor((s - n) / 2 + 16), thi
 },
 progressChanged: function() {
 var e = this.changeColor(this.timeSet - this.theTime, this.timeSet, this.timePercentGreen, this.timePercentYellow, this.timePercentRed);
-this.barStyle.innerHTML = ".app-bar-color { background-color: " + e + "; }", this.$.progress.$.bar.applyStyle("background", e);
+this.$.progress.$.bar.applyStyle("background", e);
 },
 changeColor: function(e, t, n, r, i) {
 var s = 0, o = 255, u = 255, a = 255, f = 255, l = 0, c = "", h, p, d, v, m = r - n, g = i - r, y = e === 0 ? 0 : Math.floor(e / t * 100);
@@ -3591,15 +3596,17 @@ if (this.theTime === 0) return;
 switch (this.theState) {
 case this.states.stopped:
 case this.states.paused:
-this.theState = this.states.running, this.$.buttonStart.setContent("Pause"), this.buttonsOff(), this.timer = setTimeout(this.updateTime.bind(this), this.timeOut);
+this.theState = this.states.running, this.$.buttonStart.setContent("Pause"), this.buttonsOff(), this.timer = setInterval(this.updateTime.bind(this), this.timeOut);
 break;
 case this.states.running:
-this.theState = this.states.paused, this.buttonsOn(), this.$.buttonStart.setContent("Start");
+clearInterval(this.timer), this.theState = this.states.paused, this.buttonsOn(), this.$.buttonStart.setContent("Start");
 }
 },
 updateTime: function() {
 if (this.theTime === 0) return;
-this.theTime--, this.theTime < 0 && (this.theTime = 0), this.displayTime(this.theTime), this.theTime > 0 && this.theState === this.states.running ? setTimeout(this.updateTime.bind(this), this.timeOut) : this.theTime === 0 && this.stopTime(), this.progressChanged();
+this.theTime--, this.theTime < 0 && (this.theTime = 0), this.displayTime(this.theTime);
+if (this.theTime === 0 || this.theState !== this.states.running) clearInterval(this.timer), this.stopTime();
+this.progressChanged();
 },
 stopTime: function() {
 this.theState = this.states.stopped, this.buttonsOn(), this.$.buttonStart.setContent("Start");
@@ -3610,13 +3617,26 @@ this.$.buttonPlus.hide(), this.$.buttonMinus.hide(), this.$.buttonReset.hide();
 buttonsOn: function() {
 this.$.buttonPlus.show(), this.$.buttonMinus.show(), this.$.buttonReset.show();
 },
-plusOne: function(e, t) {
-this.theState !== this.states.running && (this.theTime = Math.floor(this.theTime / 60), this.theTime += 1, this.theTime *= 60, this.theTime > this.timeMax && (this.theTime = this.timeMax), this.timeSet = this.theTime, this.displayTime(this.theTime));
+plusButtonDown: function(e, t) {
+this.plusTimer = setInterval(this.plusOne.bind(this), this.plusMinusTimeout);
 },
-minusOne: function(e, t) {
+plusButtonUp: function(e, t) {
+clearInterval(this.plusTimer), this.plusOne(!0);
+},
+plusOne: function(e) {
+e = e || !1, this.theState !== this.states.running && (this.theTime = Math.floor(this.theTime / 60), this.theTime += 1, this.theTime *= 60, this.theTime > this.timeMax && (this.theTime = this.timeMax, clearInterval(this.plusTimer)), e && clearInterval(this.plusTimer), this.timeSet = this.theTime, this.displayTime(this.theTime));
+},
+minusButtonDown: function(e, t) {
+this.minusTimer = setInterval(this.minusOne.bind(this), this.plusMinusTimeout);
+},
+minusButtonUp: function(e, t) {
+clearInterval(this.minusTimer), this.minusOne(!0);
+},
+minusOne: function(e) {
+e = e || !1;
 if (this.theState !== this.states.running) {
-var n = Math.floor(this.theTime % 60) > 29 ? 1 : 0;
-this.theTime = Math.floor(this.theTime / 60) + n, this.theTime -= 1, this.theTime *= 60, this.theTime < 0 && (this.theTime = 0), this.timeSet = this.theTime, this.displayTime(this.theTime);
+var t = Math.floor(this.theTime % 60) > 29 ? 1 : 0;
+this.theTime = Math.floor(this.theTime / 60) + t, this.theTime -= 1, this.theTime *= 60, this.theTime < 0 && (this.theTime = 0, clearInterval(this.minusTimer)), e && clearInterval(this.minusTimer), this.timeSet = this.theTime, this.displayTime(this.theTime);
 }
 },
 resetClock: function(e, t) {
