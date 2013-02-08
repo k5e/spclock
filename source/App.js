@@ -5,7 +5,7 @@ enyo.kind({
 	fit: true,
 	components:[
 		{kind: "onyx.Toolbar", content: "Speaker's Clock"},
-		{name: "timeDisplay", fit: true, classes: "time-display", allowHtml: true, onresize:"displayResized"},
+		{name: "timeDisplay", fit: true, classes: "time-display", allowHtml: true, onresize:"displayResized", ontap: "startClock"},
 		{kind: "onyx.ProgressBar", name: "progress", showStripes: false, classes: "app-progress-black", barClasses: "bar-color"},
 		{kind: "onyx.Toolbar", components: [
 			{kind: "onyx.Button", name: "buttonStart", content: "Start", ontap: "startClock"},
@@ -36,7 +36,7 @@ enyo.kind({
 	
 	create: function() {
 		this.inherited(arguments);
-		this.$.progress.$.bar.applyStyle("border-radius", "0px 7px 7px 0px");
+		this.$.progress.$.bar.applyStyle("border-radius", "3px 7px 7px 3px");
 		this.timeSet = this.timeDefault;
 		this.theTime = this.timeDefault;
 		this.displayTime(this.theTime);
