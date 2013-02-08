@@ -3524,7 +3524,8 @@ name: "timeDisplay",
 fit: !0,
 classes: "time-display",
 allowHtml: !0,
-onresize: "displayResized"
+onresize: "displayResized",
+ontap: "startClock"
 }, {
 kind: "onyx.ProgressBar",
 name: "progress",
@@ -3577,7 +3578,7 @@ timePercentYellow: 70,
 timePercentRed: 90,
 barStyle: null,
 create: function() {
-this.inherited(arguments), this.$.progress.$.bar.applyStyle("border-radius", "0px 7px 7px 0px"), this.timeSet = this.timeDefault, this.theTime = this.timeDefault, this.displayTime(this.theTime), this.displayResized();
+this.inherited(arguments), this.$.progress.$.bar.applyStyle("border-radius", "3px 7px 7px 3px"), this.timeSet = this.timeDefault, this.theTime = this.timeDefault, this.displayTime(this.theTime), this.displayResized();
 },
 displayResized: function(e, t) {
 var n = 0, r = 0, i = "", s = window.innerHeight - 176, o = window.innerWidth - 80;
