@@ -9,8 +9,8 @@ enyo.kind({
 		{kind: "onyx.ProgressBar", name: "progress", showStripes: false, classes: "app-progress-black", barClasses: "bar-color"},
 		{kind: "onyx.Toolbar", components: [
 			{kind: "onyx.Button", name: "buttonStart", content: "Start", ontap: "startClock"},
-			{kind: "onyx.Button", name: "buttonPlus", content: "+", ontap: "plusOne"},
-			{kind: "onyx.Button", name: "buttonMinus", content: "-", ontap: "minusOne"},
+			{kind: "onyx.Button", name: "buttonPlus", content: "+", ondown: "plusButtonDown", ontap: "plusButtonUp"},
+			{kind: "onyx.Button", name: "buttonMinus", content: "-", ondown: "minusButtonDown", ontap: "minusButtonUp"},
 			{kind: "onyx.Button", name: "buttonReset", content: "Reset", ontap: "resetClock"}
 		]}
 	],
@@ -25,7 +25,10 @@ enyo.kind({
 	timeMax: 5940, // 99 min.
 	timeDefault: 1200, //20 min.
 	timeOut: 1000,
+	plusMinusTimeout: 150,
 	timer: null,
+	plusTimer: null,
+	minusTimer: null,
 	timePercentGreen: 50,
 	timePercentYellow: 70,
 	timePercentRed: 90,
@@ -33,9 +36,7 @@ enyo.kind({
 	
 	create: function() {
 		this.inherited(arguments);
-		this.barStyle = document.createElement('style');
-		this.barStyle.type = 'text/css';
-		this.barStyle.innerHTML = '.bar-color { background: grey; }';
+		this.$.progress.$.bar.applyStyle("border-radius", "0px 7px 7px 0px");
 		this.timeSet = this.timeDefault;
 		this.theTime = this.timeDefault;
 		this.displayTime(this.theTime);
@@ -59,7 +60,6 @@ enyo.kind({
 	progressChanged: function () {
 		var color = this.changeColor (this.timeSet - this.theTime, this.timeSet, 
 			this.timePercentGreen, this.timePercentYellow, this.timePercentRed);
-		this.barStyle.innerHTML = ".app-bar-color { background-color: " + color +"; }";
 		this.$.progress.$.bar.applyStyle("background", color);
 	},
 	
@@ -94,14 +94,15 @@ enyo.kind({
 			return;
 		switch(this.theState) {
 		case this.states.stopped:
-		//fallthrough
+		// fallthrough
 		case this.states.paused:
 			this.theState = this.states.running;
 			this.$.buttonStart.setContent("Pause");
 			this.buttonsOff();
-			this.timer = setTimeout(this.updateTime.bind(this), this.timeOut);
+			this.timer = setInterval(this.updateTime.bind(this), this.timeOut);
 			break;
 		case this.states.running:
+			clearInterval(this.timer);
 			this.theState = this.states.paused;
 			this.buttonsOn();
 			this.$.buttonStart.setContent("Start");
@@ -116,10 +117,10 @@ enyo.kind({
 		if(this.theTime < 0)
 			this.theTime = 0;
 		this.displayTime(this.theTime);
-		if (this.theTime > 0 && this.theState === this.states.running)
-			setTimeout(this.updateTime.bind(this), this.timeOut);
-		else if (this.theTime === 0)
+		if (this.theTime === 0 || this.theState !== this.states.running) {
+			clearInterval(this.timer);
 			this.stopTime();
+		}
 		this.progressChanged();
 	},
 	
@@ -127,7 +128,6 @@ enyo.kind({
 		this.theState = this.states.stopped;
 		this.buttonsOn();
 		this.$.buttonStart.setContent("Start");
-		
 	},
 	
 	buttonsOff: function() {
@@ -142,27 +142,55 @@ enyo.kind({
 			this.$.buttonReset.show();
 	},
 	
-	plusOne: function(inSender, inEvent) {
+	plusButtonDown: function(inSender, inEvent) {
+		this.plusTimer = setInterval(this.plusOne.bind(this), this.plusMinusTimeout);
+	},
+	
+	plusButtonUp: function(inSender, inEvent) {
+		clearInterval(this.plusTimer);
+		this.plusOne(true);
+	},
+	
+	plusOne: function(up) {
+		up = up || false;
 		if(this.theState !== this.states.running) {
 			this.theTime = Math.floor(this.theTime / 60);
 			this.theTime += 1;
 			this.theTime *= 60;
-			if(this.theTime > this.timeMax) {
+			if (this.theTime > this.timeMax) {
 				this.theTime = this.timeMax;
+				clearInterval(this.plusTimer);
+			}
+			if (up) {
+				clearInterval(this.plusTimer);
 			}
 			this.timeSet = this.theTime;
 			this.displayTime(this.theTime);
 		}
 	},
 	
-	minusOne: function(inSender, inEvent) {
+	minusButtonDown: function(inSender, inEvent) {
+		this.minusTimer = setInterval(this.minusOne.bind(this), this.plusMinusTimeout);
+	},
+	
+	minusButtonUp: function(inSender, inEvent) {
+		clearInterval(this.minusTimer);
+		this.minusOne(true);
+	},
+	
+	minusOne: function(up) {
+		up = up || false;
 		if(this.theState !== this.states.running) {
 			var plus1 = Math.floor(this.theTime % 60) > 29 ? 1 : 0;
 			this.theTime = Math.floor(this.theTime / 60) + plus1;
 			this.theTime -= 1;
 			this.theTime *= 60;
-			if(this.theTime < 0) {
+			if (this.theTime < 0) {
 				this.theTime = 0;
+				clearInterval(this.minusTimer);
+			}
+			if (up) {
+				clearInterval(this.minusTimer);
 			}
 			this.timeSet = this.theTime;
 			this.displayTime(this.theTime);
