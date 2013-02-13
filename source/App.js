@@ -6,7 +6,9 @@ enyo.kind({
 	components:[
 		{kind: "onyx.Toolbar", layoutKind: "FittableColumnsLayout", components: [
 			{name: "appTitle", content: "Speaker's Clock"},
-			{fit: "true"},
+			//{fit: "true"},
+			{kind: "onyx.WebAppButton", alwaysShow: true, onInstallSuccess: "installSuccess", onInstallError: "installError", 
+				webAppUrl: "http://k5e.github.com/spclock/app/manifest.webapp"},
 			{kind: "onyx.Button", name: "buttonAbout", content: "?", ontap: "aboutButton"}
 		]},
 		{name: "timeDisplay", fit: true, classes: "time-display", allowHtml: true, onresize:"displayResized", ontap: "startClock"},
@@ -231,5 +233,13 @@ enyo.kind({
 		this.$.timeDisplay.setContent(m + ":" + s);
 		p = 100 * (this.timeSet - t) / this.timeSet;
 		this.$.progress.animateProgressTo(p);
+	},
+	
+	installSuccess: function(response) {
+		alert("install Success", response);
+	},
+	
+	installError: function(err) {
+		alert("install Error", err);
 	}
 });
