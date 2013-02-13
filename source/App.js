@@ -4,7 +4,11 @@ enyo.kind({
 	styles: "background: black",
 	fit: true,
 	components:[
-		{kind: "onyx.Toolbar", content: "Speaker's Clock"},
+		{kind: "onyx.Toolbar", layoutKind: "FittableColumnsLayout", components: [
+			{name: "appTitle", content: "Speaker's Clock"},
+			{fit: "true"},
+			{kind: "onyx.Button", name: "buttonAbout", content: "?", ontap: "aboutButton"}
+		]},
 		{name: "timeDisplay", fit: true, classes: "time-display", allowHtml: true, onresize:"displayResized", ontap: "startClock"},
 		{kind: "onyx.ProgressBar", name: "progress", showStripes: false, classes: "app-progress-black", barClasses: "bar-color"},
 		{kind: "onyx.Toolbar", components: [
@@ -12,7 +16,8 @@ enyo.kind({
 			{kind: "onyx.Button", name: "buttonPlus", content: "+", ondown: "plusButtonDown", ontap: "plusButtonUp"},
 			{kind: "onyx.Button", name: "buttonMinus", content: "-", ondown: "minusButtonDown", ontap: "minusButtonUp"},
 			{kind: "onyx.Button", name: "buttonReset", content: "Reset", ontap: "resetClock"}
-		]}
+		]},
+		{kind: "onyx.Popup", name: "aboutPopup", allowHtml: "true", centered: true, floating: true, style: "background: #eee;color: black;padding: 3px; font-size: small;", content: "Popup...", ontap: "popupHide"},
 	],
 	states: { 
 		stopped: 0,
@@ -36,11 +41,21 @@ enyo.kind({
 	
 	create: function() {
 		this.inherited(arguments);
-		this.$.progress.$.bar.applyStyle("border-radius", "3px 7px 7px 3px");
+		this.$.progress.$.bar.applyStyle("border-radius", "6px 6px 6px 6px");
 		this.timeSet = this.timeDefault;
 		this.theTime = this.timeDefault;
 		this.displayTime(this.theTime);
 		this.displayResized();
+		this.$.aboutPopup.setContent(document.getElementById("about").innerHTML);
+	},
+
+	aboutButton: function(inSender, inEvent) {
+		this.$.aboutPopup.show();
+		setTimeout(this.popupHide.bind(this), 16383);
+	},
+	
+	popupHide: function() {
+		this.$.aboutPopup.hide();
 	},
 	
 	displayResized: function (inSender, inEvent) {
@@ -134,12 +149,14 @@ enyo.kind({
 			this.$.buttonPlus.hide();
 			this.$.buttonMinus.hide();
 			this.$.buttonReset.hide();
+			this.$.buttonAbout.disabled = true;
 	},
 	
 	buttonsOn: function() {
 			this.$.buttonPlus.show();
 			this.$.buttonMinus.show();
 			this.$.buttonReset.show();
+			this.$.buttonAbout.disabled = false;
 	},
 	
 	plusButtonDown: function(inSender, inEvent) {
