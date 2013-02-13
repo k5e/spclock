@@ -1,6 +1,7 @@
+
 // minifier: path aliases
 
-enyo.path.addPaths({layout: "C://projects/de/k5e/spclock/enyo/../lib/layout/", onyx: "C://projects/de/k5e/spclock/enyo/../lib/onyx/", onyx: "C://projects/de/k5e/spclock/enyo/../lib/onyx/source/"});
+enyo.path.addPaths({layout: "C://projects/de/k5e/spclock/enyo/../lib/layout/", onyx: "C://projects/de/k5e/spclock/enyo/../lib/onyx/", onyx: "C://projects/de/k5e/spclock/enyo/../lib/onyx/source/", webappinstaller: "C://projects/de/k5e/spclock/enyo/../lib/webappinstaller/"});
 
 // FittableLayout.js
 
@@ -3508,6 +3509,68 @@ c.toolbarIndex === undefined && (c.toolbarIndex = t);
 }
 });
 
+// WebAppInstaller.js
+
+enyo.WebAppInstaller = {
+check: function(e) {
+var t = {
+type: "unsupported",
+installed: !1
+};
+if (navigator.mozApps) {
+var n = navigator.mozApps.getSelf();
+n.onsuccess = function(r) {
+t.type = "mozilla", t.installed = n.result ? !0 : !1, e(t);
+}, n.onerror = function(n) {
+enyo.error("Error checking Mozilla app status"), e(t);
+};
+} else typeof chrome != "undefined" && chrome.webstore && chrome.app ? (t.type = "chromeStore", t.installed = chrome.app.isInstalled ? !0 : !1, e(t)) : typeof window.navigator.standalone != "undefined" ? (t.type = "ios", t.installed = window.navigator.standalone ? !0 : !1, e(t)) : e(t);
+},
+install: function(e, t, n) {
+arguments.length == 2 && (n = t || undefined, t = e || undefined, e = undefined);
+if (navigator.mozApps) {
+if (!e) {
+var r = window.location.href.lastIndexOf("/");
+r > window.location.href.indexOf("://") + 2 ? e = window.location.href.substring(0, r + 1) + "manifest.webapp" : e = window.location.href + "/manifest.webapp";
+}
+var i = navigator.mozApps.install(e);
+i.onsuccess = t, i.onerror = n;
+} else typeof chrome != "undefined" && chrome.webstore && chrome.app ? chrome.webstore.install(e, t, n) : enyo.platform.ios && alert('To install, press the share button in Safari and tap "Add to Home Screen"');
+}
+};
+
+// WebAppButton.js
+
+enyo.kind({
+name: "onyx.WebAppButton",
+kind: "onyx.Button",
+installLabel: "Install",
+updateLabel: "Update",
+webAppUrl: undefined,
+alwaysShow: !1,
+events: {
+onInstallSuccess: "",
+onInstallError: ""
+},
+handlers: {
+ontap: "install"
+},
+showing: !1,
+checked: !1,
+rendered: function() {
+this.inherited(arguments), this.checked || (this.checked = !0, enyo.WebAppInstaller.check(enyo.bind(this, function(e) {
+e.type != "unsupported" && (this.setShowing(!e.installed || this.alwaysShow), this.setContent(e.installed ? this.updateLabel : this.installLabel));
+})));
+},
+install: function() {
+enyo.WebAppInstaller.install(enyo.bind(this, function(e) {
+this.alwaysShow || this.hide(), this.setContent(this.updateLabel), this.doInstallSuccess(e);
+}), enyo.bind(this, function(e) {
+this.doInstallError(e);
+}));
+}
+});
+
 // App.js
 
 enyo.kind({
@@ -3517,7 +3580,22 @@ styles: "background: black",
 fit: !0,
 components: [ {
 kind: "onyx.Toolbar",
+layoutKind: "FittableColumnsLayout",
+components: [ {
+name: "appTitle",
 content: "Speaker's Clock"
+}, {
+kind: "onyx.WebAppButton",
+alwaysShow: !0,
+onInstallSuccess: "installSuccess",
+onInstallError: "installError",
+webAppUrl: "http://k5e.github.com/spclock/app/manifest.webapp"
+}, {
+kind: "onyx.Button",
+name: "buttonAbout",
+content: "?",
+ontap: "aboutButton"
+} ]
 }, {
 name: "timeDisplay",
 fit: !0,
@@ -3556,6 +3634,15 @@ name: "buttonReset",
 content: "Reset",
 ontap: "resetClock"
 } ]
+}, {
+kind: "onyx.Popup",
+name: "aboutPopup",
+allowHtml: "true",
+centered: !0,
+floating: !0,
+style: "background: #eee;color: black;padding: 3px; font-size: small;",
+content: "Popup...",
+ontap: "popupHide"
 } ],
 states: {
 stopped: 0,
@@ -3577,7 +3664,13 @@ timePercentYellow: 70,
 timePercentRed: 90,
 barStyle: null,
 create: function() {
-this.inherited(arguments), this.$.progress.$.bar.applyStyle("border-radius", "3px 7px 7px 3px"), this.timeSet = this.timeDefault, this.theTime = this.timeDefault, this.displayTime(this.theTime), this.displayResized();
+this.inherited(arguments), this.$.progress.$.bar.applyStyle("border-radius", "6px 6px 6px 6px"), this.timeSet = this.timeDefault, this.theTime = this.timeDefault, this.displayTime(this.theTime), this.displayResized(), this.$.aboutPopup.setContent(document.getElementById("about").innerHTML);
+},
+aboutButton: function(e, t) {
+this.$.aboutPopup.show(), setTimeout(this.popupHide.bind(this), 16383);
+},
+popupHide: function() {
+this.$.aboutPopup.hide();
 },
 displayResized: function(e, t) {
 var n = 0, r = 0, i = "", s = window.innerHeight - 176, o = window.innerWidth - 80;
@@ -3612,10 +3705,10 @@ stopTime: function() {
 this.theState = this.states.stopped, this.buttonsOn(), this.$.buttonStart.setContent("Start");
 },
 buttonsOff: function() {
-this.$.buttonPlus.hide(), this.$.buttonMinus.hide(), this.$.buttonReset.hide();
+this.$.buttonPlus.hide(), this.$.buttonMinus.hide(), this.$.buttonReset.hide(), this.$.buttonAbout.disabled = !0;
 },
 buttonsOn: function() {
-this.$.buttonPlus.show(), this.$.buttonMinus.show(), this.$.buttonReset.show();
+this.$.buttonPlus.show(), this.$.buttonMinus.show(), this.$.buttonReset.show(), this.$.buttonAbout.disabled = !1;
 },
 plusButtonDown: function(e, t) {
 this.plusTimer = setInterval(this.plusOne.bind(this), this.plusMinusTimeout);
@@ -3645,5 +3738,11 @@ this.theState !== this.states.running && (this.theTime = this.timeSet, this.disp
 displayTime: function(e) {
 var t = Math.floor(e / 60), n = Math.floor(e % 60), r;
 t < 10 && (t = "0" + t), n < 10 && (n = "0" + n), this.$.timeDisplay.setContent(t + ":" + n), r = 100 * (this.timeSet - e) / this.timeSet, this.$.progress.animateProgressTo(r);
+},
+installSuccess: function(e) {
+alert("install Success", e);
+},
+installError: function(e) {
+alert("install Error", e);
 }
 });
