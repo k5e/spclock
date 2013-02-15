@@ -3639,10 +3639,10 @@ stopTime: function() {
 this.theState = this.states.stopped, this.buttonsOn(), this.$.buttonStart.setContent("Start");
 },
 buttonsOff: function() {
-this.$.buttonPlus.hide(), this.$.buttonMinus.hide(), this.$.buttonReset.hide(), this.$.buttonAbout.hide();
+this.$.buttonPlus.hide(), this.$.buttonMinus.hide(), this.$.buttonReset.hide(), this.$.buttonAbout.disabled = !0;
 },
 buttonsOn: function() {
-this.$.buttonPlus.show(), this.$.buttonMinus.show(), this.$.buttonReset.show(), this.$.buttonAbout.show();
+this.$.buttonPlus.show(), this.$.buttonMinus.show(), this.$.buttonReset.show(), this.$.buttonAbout.disabled = !1;
 },
 plusButtonDown: function(e, t) {
 this.plusTimer = setInterval(this.plusOne.bind(this), this.plusMinusTimeout);
