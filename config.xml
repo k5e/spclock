@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns     = "http://www.w3.org/ns/widgets"
+        xmlns:gap = "http://phonegap.com/ns/1.0"
+        id        = "com.phonegap.hello-world"
+        version   = "2.2.0">
+    <name>Speaker's Clock</name>
+
+    <description>
+        A small countdown app that helps speakers to watch their time.
+    </description>
+
+    <author href="http://k5e.github.com/spclock/" email="info@k5e.de">
+        Christian Knappke
+    </author>
+
+    <feature name="http://api.phonegap.com/1.0/device" />
+
+    <preference name="phonegap-version" value="2.2.0" />
+    <preference name="orientation"      value="default" />
+    <preference name="target-device"    value="universal" />
+    <preference name="fullscreen"       value="true" />
+
+    <icon src="icon.png" />
+    <icon src="assets/icon-32.png"   gap:platform="android"    gap:density="ldpi" />
+    <icon src="assets/icon-32.png"   gap:platform="android"    gap:density="mdpi" />
+    <icon src="assets/icon-64.png"   gap:platform="android"    gap:density="hdpi" />
+    <icon src="assets/icon-64.png"   gap:platform="webos" />
+
+    <gap:splash src="assets/icon-256"  gap:platform="android" />
+    <gap:splash src="assets/icon-256"  gap:platform="webos" />
+</widget>
