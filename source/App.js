@@ -31,6 +31,7 @@ enyo.kind({
 	timeSet: 0,
 	timeMax: 5940, // 99 min.
 	timeDefault: 1200, //20 min.
+	timeStored: "1200",
 	timeOut: 1000,
 	plusMinusTimeout: 150,
 	timer: null,
@@ -44,6 +45,12 @@ enyo.kind({
 	create: function() {
 		this.inherited(arguments);
 		this.$.progress.$.bar.applyStyle("border-radius", "6px 6px 6px 6px");
+		this.timeStored = localStorage.getItem("timeStored");
+		if (this.timeStored === null || this.timeStored === "") {
+			this.timeStored = "1200"; // default time = 20 min
+			localStorage.setItem("timeStored", this.timeStored);
+		}
+		this.timeDefault = parseInt(this.timeStored);
 		this.timeSet = this.timeDefault;
 		this.theTime = this.timeDefault;
 		this.displayTime(this.theTime);
@@ -182,6 +189,7 @@ enyo.kind({
 			}
 			if (up) {
 				clearInterval(this.plusTimer);
+				localStorage.setItem("timeStored", this.theTime);
 			}
 			this.timeSet = this.theTime;
 			this.displayTime(this.theTime);
@@ -210,6 +218,7 @@ enyo.kind({
 			}
 			if (up) {
 				clearInterval(this.minusTimer);
+				localStorage.setItem("timeStored", this.theTime);
 			}
 			this.timeSet = this.theTime;
 			this.displayTime(this.theTime);
