@@ -7,7 +7,7 @@
 		<!-- -->
 		<meta http-equiv="Content-Type" content="text/html; charset=utf8"/>
 		<meta name="apple-mobile-web-app-capable" content="yes"/>
-		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+		<meta name="viewport" content="height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 		<!-- css -->
 		<link href="build/enyo.css" rel="stylesheet"/>
 		<link href="build/app.css" rel="stylesheet"/>
@@ -29,7 +29,10 @@
 			Support: <a href="http://k5e.github.com/spclock">click/touch here</a>
 		</div>
 		<script>
-			if(window.PalmSystem) window.PalmSystem.stageReady();
+			if(window.PalmSystem) {
+				window.PalmSystem.stageReady();
+				window.PalmSystem.setWindowOrientation("free");
+			}
 			new App().renderInto(document.body);
 		</script>
 	</body>

@@ -1172,6 +1172,7 @@ body {
 }
 
 .time-display {
+	font-family: Verdana, Arial, 'Helvetica neue';
 	text-align: center;
 	font-weight: bold;
 	color: lightgrey;

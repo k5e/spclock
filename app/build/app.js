@@ -3648,25 +3648,25 @@ buttonsOn: function() {
 this.$.buttonPlus.show(), this.$.buttonMinus.show(), this.$.buttonReset.show(), this.$.buttonAbout.disabled = !1;
 },
 plusButtonDown: function(e, t) {
-this.plusTimer = setInterval(this.plusOne.bind(this), this.plusMinusTimeout);
+return clearTimeout(this.minusTimer), clearTimeout(this.plusTimer), this.plusTimer = setTimeout(this.plusOne.bind(this), this.plusMinusTimeout), !0;
 },
 plusButtonUp: function(e, t) {
-clearInterval(this.plusTimer), this.plusOne(!0);
+return this.plusOne(!0), !0;
 },
 plusOne: function(e) {
-e = e || !1, this.theState !== this.states.running && (this.theTime = Math.floor(this.theTime / 60), this.theTime += 1, this.theTime *= 60, this.theTime > this.timeMax && (this.theTime = this.timeMax, clearInterval(this.plusTimer)), e && (clearInterval(this.plusTimer), localStorage.setItem("timeStored", this.theTime)), this.timeSet = this.theTime, this.displayTime(this.theTime));
+e = e || !1, this.theState !== this.states.running && (this.theTime = Math.floor(this.theTime / 60), this.theTime += 1, this.theTime *= 60, this.theTime > this.timeMax && (this.theTime = this.timeMax, clearTimeout(this.plusTimer)), e ? (clearTimeout(this.plusTimer), localStorage.setItem("timeStored", this.theTime)) : this.plusTimer = setTimeout(this.plusOne.bind(this), this.plusMinusTimeout), this.timeSet = this.theTime, this.displayTime(this.theTime));
 },
 minusButtonDown: function(e, t) {
-this.minusTimer = setInterval(this.minusOne.bind(this), this.plusMinusTimeout);
+return clearTimeout(this.plusTimer), clearTimeout(this.minusTimer), this.minusTimer = setTimeout(this.minusOne.bind(this), this.plusMinusTimeout), !0;
 },
 minusButtonUp: function(e, t) {
-clearInterval(this.minusTimer), this.minusOne(!0);
+return this.minusOne(!0), !0;
 },
 minusOne: function(e) {
 e = e || !1;
 if (this.theState !== this.states.running) {
 var t = Math.floor(this.theTime % 60) > 29 ? 1 : 0;
-this.theTime = Math.floor(this.theTime / 60) + t, this.theTime -= 1, this.theTime *= 60, this.theTime < 0 && (this.theTime = 0, clearInterval(this.minusTimer)), e && (clearInterval(this.minusTimer), localStorage.setItem("timeStored", this.theTime)), this.timeSet = this.theTime, this.displayTime(this.theTime);
+this.theTime = Math.floor(this.theTime / 60) + t, this.theTime -= 1, this.theTime *= 60, this.theTime < 0 && (this.theTime = 0, clearTimeout(this.minusTimer)), e ? (clearTimeout(this.minusTimer), localStorage.setItem("timeStored", this.theTime)) : this.minusTimer = setTimeout(this.minusOne.bind(this), this.plusMinusTimeout), this.timeSet = this.theTime, this.displayTime(this.theTime);
 }
 },
 resetClock: function(e, t) {
