@@ -169,12 +169,15 @@ enyo.kind({
 	},
 	
 	plusButtonDown: function(inSender, inEvent) {
-		this.plusTimer = setInterval(this.plusOne.bind(this), this.plusMinusTimeout);
+		clearTimeout(this.minusTimer);
+		clearTimeout(this.plusTimer);
+		this.plusTimer = setTimeout(this.plusOne.bind(this), this.plusMinusTimeout);
+		return true;
 	},
 	
 	plusButtonUp: function(inSender, inEvent) {
-		clearInterval(this.plusTimer);
 		this.plusOne(true);
+		return true;
 	},
 	
 	plusOne: function(up) {
@@ -185,11 +188,13 @@ enyo.kind({
 			this.theTime *= 60;
 			if (this.theTime > this.timeMax) {
 				this.theTime = this.timeMax;
-				clearInterval(this.plusTimer);
+				clearTimeout(this.plusTimer);
 			}
 			if (up) {
-				clearInterval(this.plusTimer);
+				clearTimeout(this.plusTimer);
 				localStorage.setItem("timeStored", this.theTime);
+			} else {
+				this.plusTimer = setTimeout(this.plusOne.bind(this), this.plusMinusTimeout);
 			}
 			this.timeSet = this.theTime;
 			this.displayTime(this.theTime);
@@ -197,12 +202,15 @@ enyo.kind({
 	},
 	
 	minusButtonDown: function(inSender, inEvent) {
-		this.minusTimer = setInterval(this.minusOne.bind(this), this.plusMinusTimeout);
+		clearTimeout(this.plusTimer);
+		clearTimeout(this.minusTimer);
+		this.minusTimer = setTimeout(this.minusOne.bind(this), this.plusMinusTimeout);
+		return true;
 	},
 	
 	minusButtonUp: function(inSender, inEvent) {
-		clearInterval(this.minusTimer);
 		this.minusOne(true);
+		return true;
 	},
 	
 	minusOne: function(up) {
@@ -214,11 +222,13 @@ enyo.kind({
 			this.theTime *= 60;
 			if (this.theTime < 0) {
 				this.theTime = 0;
-				clearInterval(this.minusTimer);
+				clearTimeout(this.minusTimer);
 			}
 			if (up) {
-				clearInterval(this.minusTimer);
+				clearTimeout(this.minusTimer);
 				localStorage.setItem("timeStored", this.theTime);
+			} else {
+				this.minusTimer = setTimeout(this.minusOne.bind(this), this.plusMinusTimeout);
 			}
 			this.timeSet = this.theTime;
 			this.displayTime(this.theTime);
