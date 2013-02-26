@@ -3588,6 +3588,7 @@ theTime: 0,
 timeSet: 0,
 timeMax: 5940,
 timeDefault: 1200,
+timeStored: "1200",
 timeOut: 1e3,
 plusMinusTimeout: 150,
 timer: null,
@@ -3598,7 +3599,9 @@ timePercentYellow: 70,
 timePercentRed: 90,
 barStyle: null,
 create: function() {
-this.inherited(arguments), this.$.progress.$.bar.applyStyle("border-radius", "6px 6px 6px 6px"), this.timeSet = this.timeDefault, this.theTime = this.timeDefault, this.displayTime(this.theTime), this.displayResized(), this.$.aboutPopup.setContent(document.getElementById("about").innerHTML);
+this.inherited(arguments), this.$.progress.$.bar.applyStyle("border-radius", "6px 6px 6px 6px"), this.timeStored = localStorage.getItem("timeStored");
+if (this.timeStored === null || this.timeStored === "") this.timeStored = "1200", localStorage.setItem("timeStored", this.timeStored);
+this.timeDefault = parseInt(this.timeStored), this.timeSet = this.timeDefault, this.theTime = this.timeDefault, this.displayTime(this.theTime), this.displayResized(), this.$.aboutPopup.setContent(document.getElementById("about").innerHTML);
 },
 aboutButton: function(e, t) {
 this.$.aboutPopup.show(), setTimeout(this.popupHide.bind(this), 16383);
@@ -3651,7 +3654,7 @@ plusButtonUp: function(e, t) {
 clearInterval(this.plusTimer), this.plusOne(!0);
 },
 plusOne: function(e) {
-e = e || !1, this.theState !== this.states.running && (this.theTime = Math.floor(this.theTime / 60), this.theTime += 1, this.theTime *= 60, this.theTime > this.timeMax && (this.theTime = this.timeMax, clearInterval(this.plusTimer)), e && clearInterval(this.plusTimer), this.timeSet = this.theTime, this.displayTime(this.theTime));
+e = e || !1, this.theState !== this.states.running && (this.theTime = Math.floor(this.theTime / 60), this.theTime += 1, this.theTime *= 60, this.theTime > this.timeMax && (this.theTime = this.timeMax, clearInterval(this.plusTimer)), e && (clearInterval(this.plusTimer), localStorage.setItem("timeStored", this.theTime)), this.timeSet = this.theTime, this.displayTime(this.theTime));
 },
 minusButtonDown: function(e, t) {
 this.minusTimer = setInterval(this.minusOne.bind(this), this.plusMinusTimeout);
@@ -3663,7 +3666,7 @@ minusOne: function(e) {
 e = e || !1;
 if (this.theState !== this.states.running) {
 var t = Math.floor(this.theTime % 60) > 29 ? 1 : 0;
-this.theTime = Math.floor(this.theTime / 60) + t, this.theTime -= 1, this.theTime *= 60, this.theTime < 0 && (this.theTime = 0, clearInterval(this.minusTimer)), e && clearInterval(this.minusTimer), this.timeSet = this.theTime, this.displayTime(this.theTime);
+this.theTime = Math.floor(this.theTime / 60) + t, this.theTime -= 1, this.theTime *= 60, this.theTime < 0 && (this.theTime = 0, clearInterval(this.minusTimer)), e && (clearInterval(this.minusTimer), localStorage.setItem("timeStored", this.theTime)), this.timeSet = this.theTime, this.displayTime(this.theTime);
 }
 },
 resetClock: function(e, t) {

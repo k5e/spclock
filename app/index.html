@@ -29,6 +29,7 @@
 			Support: <a href="http://k5e.github.com/spclock">click/touch here</a>
 		</div>
 		<script>
+			if(window.PalmSystem) window.PalmSystem.stageReady();
 			new App().renderInto(document.body);
 		</script>
 	</body>
