@@ -1,0 +1,13 @@
+{
+	"name": "enyo-test",
+	"description": "My elevator pitch goes here and there and everywhere",
+	"launch_path": "/spclock.zip",
+	"icons": {
+		"128": "icon.png"
+	},
+	"developer": {
+		"name": "k5e",
+		"url": "http://k5e.de"
+	},
+	"default_locale": "en"
+}
