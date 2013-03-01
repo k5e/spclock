@@ -37,9 +37,9 @@ enyo.kind({
 	timer: null,
 	plusTimer: null,
 	minusTimer: null,
-	timePercentGreen: 50,
-	timePercentYellow: 70,
-	timePercentRed: 90,
+	timePercentGreen: 60,
+	timePercentYellow: 80,
+	timePercentRed: 95,
 	barStyle: null,
 	
 	create: function() {
@@ -73,7 +73,7 @@ enyo.kind({
 		var style = "";
 		var timeHeight = window.innerHeight - 176;
 		var timeWidth = window.innerWidth - 80;
-		fontSize = Math.floor((timeWidth) / 2.5);
+		fontSize = Math.floor((timeWidth) / 3.15);
 		if (fontSize > timeHeight)
 			fontSize = timeHeight;
 		paddingTop = Math.floor((timeHeight - fontSize) / 2 + 16);
@@ -106,7 +106,7 @@ enyo.kind({
 		} else if (p <= pr) { // transition to red
 			ppy = p === py ? 0 : ((p - py) / dg);
 			g = Math.floor(yg * (1 - ppy));
-			color = "rgb(255,"+ g +",00)";
+			color = "rgb(255,"+ g +",0)";
 		} else { // red
 			color = "rgb(255,0,0)";
 		}
