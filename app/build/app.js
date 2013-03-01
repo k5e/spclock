@@ -3594,9 +3594,9 @@ plusMinusTimeout: 150,
 timer: null,
 plusTimer: null,
 minusTimer: null,
-timePercentGreen: 50,
-timePercentYellow: 70,
-timePercentRed: 90,
+timePercentGreen: 60,
+timePercentYellow: 80,
+timePercentRed: 95,
 barStyle: null,
 create: function() {
 this.inherited(arguments), this.$.progress.$.bar.applyStyle("border-radius", "6px 6px 6px 6px"), this.timeStored = localStorage.getItem("timeStored");
@@ -3611,7 +3611,7 @@ this.$.aboutPopup.hide();
 },
 displayResized: function(e, t) {
 var n = 0, r = 0, i = "", s = window.innerHeight - 176, o = window.innerWidth - 80;
-n = Math.floor(o / 2.5), n > s && (n = s), r = Math.floor((s - n) / 2 + 16), this.$.timeDisplay.applyStyle("font-size", n + "px"), this.$.timeDisplay.applyStyle("padding-top", r + "px");
+n = Math.floor(o / 3.15), n > s && (n = s), r = Math.floor((s - n) / 2 + 16), this.$.timeDisplay.applyStyle("font-size", n + "px"), this.$.timeDisplay.applyStyle("padding-top", r + "px");
 },
 progressChanged: function() {
 var e = this.changeColor(this.timeSet - this.theTime, this.timeSet, this.timePercentGreen, this.timePercentYellow, this.timePercentRed);
@@ -3619,7 +3619,7 @@ this.$.progress.$.bar.applyStyle("background", e);
 },
 changeColor: function(e, t, n, r, i) {
 var s = 0, o = 255, u = 255, a = 255, f = 255, l = 0, c = "", h, p, d, v, m = r - n, g = i - r, y = e === 0 ? 0 : Math.floor(e / t * 100);
-return y <= n ? c = "rgb(0,255,0)" : y <= r ? (h = y === n ? 0 : (y - n) / m, d = Math.floor(u * h), c = "rgb(" + d + ",255,0)") : y <= i ? (p = y === r ? 0 : (y - r) / m, v = Math.floor(a * (1 - p)), c = "rgb(255," + v + ",00)") : c = "rgb(255,0,0)", c;
+return y <= n ? c = "rgb(0,255,0)" : y <= r ? (h = y === n ? 0 : (y - n) / m, d = Math.floor(u * h), c = "rgb(" + d + ",255,0)") : y <= i ? (p = y === r ? 0 : (y - r) / m, v = Math.floor(a * (1 - p)), c = "rgb(255," + v + ",0)") : c = "rgb(255,0,0)", c;
 },
 startClock: function() {
 if (this.theTime === 0) return;

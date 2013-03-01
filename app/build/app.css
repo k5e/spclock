@@ -1179,7 +1179,7 @@ body {
 }
 
 .app-progress-black {
-	background: black;
+	background: #333;
 	margin: 6px;
 	height: 16px;
 }
