@@ -44,7 +44,7 @@ enyo.kind({
 	
 	create: function() {
 		this.inherited(arguments);
-		this.$.progress.$.bar.applyStyle("border-radius", "6px 6px 6px 6px");
+		this.$.progress.$.bar.applyStyle("border-radius", "3px 3px 3px 3px");
 		this.timeStored = localStorage.getItem("timeStored");
 		if (this.timeStored === null || this.timeStored === "") {
 			this.timeStored = "1200"; // default time = 20 min
