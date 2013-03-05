@@ -1178,6 +1178,10 @@ body {
 	color: lightgrey;
 }
 
+.overtime {
+	color: red;
+}
+
 .app-progress-black {
 	background: #333;
 	margin: 6px;

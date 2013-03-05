@@ -3583,6 +3583,7 @@ stopped: 0,
 paused: 1,
 running: 2
 },
+overtime: !1,
 theState: 0,
 theTime: 0,
 timeSet: 0,
@@ -3599,7 +3600,7 @@ timePercentYellow: 80,
 timePercentRed: 95,
 barStyle: null,
 create: function() {
-this.inherited(arguments), this.$.progress.$.bar.applyStyle("border-radius", "6px 6px 6px 6px"), this.timeStored = localStorage.getItem("timeStored");
+this.inherited(arguments), this.$.progress.$.bar.applyStyle("border-radius", "3px 3px 3px 3px"), this.timeStored = localStorage.getItem("timeStored");
 if (this.timeStored === null || this.timeStored === "") this.timeStored = "1200", localStorage.setItem("timeStored", this.timeStored);
 this.timeDefault = parseInt(this.timeStored), this.timeSet = this.timeDefault, this.theTime = this.timeDefault, this.displayTime(this.theTime), this.displayResized(), this.$.aboutPopup.setContent(document.getElementById("about").innerHTML);
 },
@@ -3622,7 +3623,7 @@ var s = 0, o = 255, u = 255, a = 255, f = 255, l = 0, c = "", h, p, d, v, m = r 
 return y <= n ? c = "rgb(0,255,0)" : y <= r ? (h = y === n ? 0 : (y - n) / m, d = Math.floor(u * h), c = "rgb(" + d + ",255,0)") : y <= i ? (p = y === r ? 0 : (y - r) / m, v = Math.floor(a * (1 - p)), c = "rgb(255," + v + ",0)") : c = "rgb(255,0,0)", c;
 },
 startClock: function() {
-if (this.theTime === 0) return;
+if (this.theTime === 0 && !this.overtime) return;
 switch (this.theState) {
 case this.states.stopped:
 case this.states.paused:
@@ -3633,10 +3634,7 @@ clearInterval(this.timer), this.theState = this.states.paused, this.buttonsOn(),
 }
 },
 updateTime: function() {
-if (this.theTime === 0) return;
-this.theTime--, this.theTime < 0 && (this.theTime = 0), this.displayTime(this.theTime);
-if (this.theTime === 0 || this.theState !== this.states.running) clearInterval(this.timer), this.stopTime();
-this.progressChanged();
+this.theTime--, this.theTime < 0 && !this.overtime && (this.overtime = !0, this.$.timeDisplay.addClass("overtime")), this.displayTime(this.theTime);
 },
 stopTime: function() {
 this.theState = this.states.stopped, this.buttonsOn(), this.$.buttonStart.setContent("Start");
@@ -3648,32 +3646,36 @@ buttonsOn: function() {
 this.$.buttonPlus.show(), this.$.buttonMinus.show(), this.$.buttonReset.show(), this.$.buttonAbout.disabled = !1;
 },
 plusButtonDown: function(e, t) {
-return clearTimeout(this.minusTimer), clearTimeout(this.plusTimer), this.plusTimer = setTimeout(this.plusOne.bind(this), this.plusMinusTimeout), !0;
+return this.$.progress.animateProgressTo(0), clearTimeout(this.minusTimer), clearTimeout(this.plusTimer), this.plusTimer = setTimeout(this.plusOne.bind(this), this.plusMinusTimeout), !0;
 },
 plusButtonUp: function(e, t) {
 return this.plusOne(!0), !0;
 },
 plusOne: function(e) {
-e = e || !1, this.theState !== this.states.running && (this.theTime = Math.floor(this.theTime / 60), this.theTime += 1, this.theTime *= 60, this.theTime > this.timeMax && (this.theTime = this.timeMax, clearTimeout(this.plusTimer)), e ? (clearTimeout(this.plusTimer), localStorage.setItem("timeStored", this.theTime)) : this.plusTimer = setTimeout(this.plusOne.bind(this), this.plusMinusTimeout), this.timeSet = this.theTime, this.displayTime(this.theTime));
+e = e || !1, this.overtime && this.recoverFromOvertime(), this.theState !== this.states.running && (this.theTime = Math.floor(this.theTime / 60), this.theTime += 1, this.theTime *= 60, this.theTime < 60 && (this.theTime = 60, clearTimeout(this.plusTimer)), this.theTime > this.timeMax && (this.theTime = this.timeMax, clearTimeout(this.plusTimer)), e ? (clearTimeout(this.plusTimer), localStorage.setItem("timeStored", this.theTime)) : this.plusTimer = setTimeout(this.plusOne.bind(this), this.plusMinusTimeout), this.timeSet = this.theTime, this.displayTime(this.theTime));
 },
 minusButtonDown: function(e, t) {
-return clearTimeout(this.plusTimer), clearTimeout(this.minusTimer), this.minusTimer = setTimeout(this.minusOne.bind(this), this.plusMinusTimeout), !0;
+return this.$.progress.animateProgressTo(0), clearTimeout(this.plusTimer), clearTimeout(this.minusTimer), this.minusTimer = setTimeout(this.minusOne.bind(this), this.plusMinusTimeout), !0;
 },
 minusButtonUp: function(e, t) {
 return this.minusOne(!0), !0;
 },
 minusOne: function(e) {
-e = e || !1;
+e = e || !1, this.overtime && this.recoverFromOvertime();
 if (this.theState !== this.states.running) {
 var t = Math.floor(this.theTime % 60) > 29 ? 1 : 0;
-this.theTime = Math.floor(this.theTime / 60) + t, this.theTime -= 1, this.theTime *= 60, this.theTime < 0 && (this.theTime = 0, clearTimeout(this.minusTimer)), e ? (clearTimeout(this.minusTimer), localStorage.setItem("timeStored", this.theTime)) : this.minusTimer = setTimeout(this.minusOne.bind(this), this.plusMinusTimeout), this.timeSet = this.theTime, this.displayTime(this.theTime);
+this.theTime = Math.floor(this.theTime / 60) + t, this.theTime -= 1, this.theTime *= 60, this.theTime < 60 && (this.theTime = 60, clearTimeout(this.minusTimer)), e ? (clearTimeout(this.minusTimer), localStorage.setItem("timeStored", this.theTime)) : this.minusTimer = setTimeout(this.minusOne.bind(this), this.plusMinusTimeout), this.timeSet = this.theTime, this.displayTime(this.theTime);
 }
 },
 resetClock: function(e, t) {
-this.theState !== this.states.running && (this.theTime = this.timeSet, this.displayTime(this.theTime), this.$.buttonStart.setContent("Start"));
+this.theState !== this.states.running && (this.theTime = this.timeSet, this.displayTime(this.theTime), this.$.buttonStart.setContent("Start"), this.recoverFromOvertime());
+},
+recoverFromOvertime: function() {
+this.overtime = !1, this.$.timeDisplay.removeClass("overtime"), this.$.progress.animateProgressTo(0);
 },
 displayTime: function(e) {
+e >= 0 ? this.progressChanged() : e *= -1;
 var t = Math.floor(e / 60), n = Math.floor(e % 60), r;
-t < 10 && (t = "0" + t), n < 10 && (n = "0" + n), this.$.timeDisplay.setContent(t + ":" + n), r = 100 * (this.timeSet - e) / this.timeSet, this.$.progress.animateProgressTo(r);
+t < 10 && (t = "0" + t), n < 10 && (n = "0" + n), this.$.timeDisplay.setContent(t + ":" + n), !this.overtime && this.theState === this.states.running && (r = 100 * (this.timeSet - e) / this.timeSet, this.$.progress.animateProgressTo(r));
 }
 });
