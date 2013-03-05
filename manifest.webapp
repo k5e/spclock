@@ -1,5 +1,5 @@
 {
-    "version": "1.0.2",
+    "version": "1.0.3",
     "name": "SpeakerClock",
     "description": "A small countdown app that helps speakers to watch their time.",
     "launch_path": "/index.html",

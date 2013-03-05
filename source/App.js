@@ -26,6 +26,7 @@ enyo.kind({
 		paused: 1,
 		running: 2
 	},
+	overtime: false,
 	theState: 0,
 	theTime: 0,
 	timeSet: 0,
@@ -114,7 +115,7 @@ enyo.kind({
 	},
 	
 	startClock: function() {
-		if(this.theTime === 0) 
+		if ((this.theTime === 0) && !this.overtime)
 			return;
 		switch(this.theState) {
 		case this.states.stopped:
@@ -135,17 +136,12 @@ enyo.kind({
 	},
 	
 	updateTime: function() {
-		if(this.theTime === 0) 
-			return;
 		this.theTime--;
-		if(this.theTime < 0)
-			this.theTime = 0;
-		this.displayTime(this.theTime);
-		if (this.theTime === 0 || this.theState !== this.states.running) {
-			clearInterval(this.timer);
-			this.stopTime();
+		if((this.theTime < 0) && !this.overtime) {
+			this.overtime = true;
+			this.$.timeDisplay.addClass("overtime");
 		}
-		this.progressChanged();
+		this.displayTime(this.theTime);
 	},
 	
 	stopTime: function() {
@@ -169,6 +165,7 @@ enyo.kind({
 	},
 	
 	plusButtonDown: function(inSender, inEvent) {
+		this.$.progress.animateProgressTo(0);
 		clearTimeout(this.minusTimer);
 		clearTimeout(this.plusTimer);
 		this.plusTimer = setTimeout(this.plusOne.bind(this), this.plusMinusTimeout);
@@ -182,10 +179,17 @@ enyo.kind({
 	
 	plusOne: function(up) {
 		up = up || false;
+		if (this.overtime) {
+			this.recoverFromOvertime();
+		}
 		if(this.theState !== this.states.running) {
 			this.theTime = Math.floor(this.theTime / 60);
 			this.theTime += 1;
 			this.theTime *= 60;
+			if (this.theTime < 60) {
+				this.theTime = 60;
+				clearTimeout(this.plusTimer);
+			}
 			if (this.theTime > this.timeMax) {
 				this.theTime = this.timeMax;
 				clearTimeout(this.plusTimer);
@@ -202,6 +206,7 @@ enyo.kind({
 	},
 	
 	minusButtonDown: function(inSender, inEvent) {
+		this.$.progress.animateProgressTo(0);
 		clearTimeout(this.plusTimer);
 		clearTimeout(this.minusTimer);
 		this.minusTimer = setTimeout(this.minusOne.bind(this), this.plusMinusTimeout);
@@ -215,13 +220,16 @@ enyo.kind({
 	
 	minusOne: function(up) {
 		up = up || false;
+		if (this.overtime) {
+			this.recoverFromOvertime();
+		}
 		if(this.theState !== this.states.running) {
 			var plus1 = Math.floor(this.theTime % 60) > 29 ? 1 : 0;
 			this.theTime = Math.floor(this.theTime / 60) + plus1;
 			this.theTime -= 1;
 			this.theTime *= 60;
-			if (this.theTime < 0) {
-				this.theTime = 0;
+			if (this.theTime < 60) {
+				this.theTime = 60;
 				clearTimeout(this.minusTimer);
 			}
 			if (up) {
@@ -240,18 +248,32 @@ enyo.kind({
 			this.theTime = this.timeSet;
 			this.displayTime(this.theTime);
 			this.$.buttonStart.setContent("Start");
+			this.recoverFromOvertime();
 		}
 	},
 	
+	recoverFromOvertime: function() {
+		this.overtime = false;
+		this.$.timeDisplay.removeClass("overtime");
+		this.$.progress.animateProgressTo(0);
+	},
+
 	displayTime: function(t) {
+		if(t >= 0) {
+			this.progressChanged();
+		} else { // negative means overtime
+			t *= -1;
+		}
 		var m = Math.floor(t / 60);
 		var s = Math.floor(t % 60);
 		var p;
 		if(m < 10) m = "0"+m;
 		if(s < 10) s = "0"+s;
 		this.$.timeDisplay.setContent(m + ":" + s);
-		p = 100 * (this.timeSet - t) / this.timeSet;
-		this.$.progress.animateProgressTo(p);
+		if (!this.overtime && (this.theState === this.states.running)) {
+			p = 100 * (this.timeSet - t) / this.timeSet;
+			this.$.progress.animateProgressTo(p);
+		}
 	},
 /*	
 	installSuccess: function(response) {
