@@ -42,6 +42,7 @@ enyo.kind({
 	timePercentYellow: 80,
 	timePercentRed: 95,
 	barStyle: null,
+	screenlock: null,
 	
 	create: function() {
 		if(window.PalmSystem) {
@@ -130,6 +131,8 @@ enyo.kind({
 			this.timer = setInterval(this.updateTime.bind(this), this.timeOut);
 			if(window.PalmSystem) {
 				window.PalmSystem.setWindowProperties({"blockScreenTimeout":true});
+			} else {
+				this.screenlock = window.navigator.requestWakeLock('screen');
 			}
 			break;
 		case this.states.running:
@@ -139,6 +142,8 @@ enyo.kind({
 			this.$.buttonStart.setContent("Start");
 			if(window.PalmSystem) {
 				window.PalmSystem.setWindowProperties({"blockScreenTimeout":false});
+			} else {
+				this.screenlock.unlock();
 			}
 			break;
 		}
