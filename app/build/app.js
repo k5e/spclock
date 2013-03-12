@@ -3600,7 +3600,7 @@ timePercentYellow: 80,
 timePercentRed: 95,
 barStyle: null,
 create: function() {
-this.inherited(arguments), this.$.progress.$.bar.applyStyle("border-radius", "3px 3px 3px 3px"), this.timeStored = localStorage.getItem("timeStored");
+window.PalmSystem && window.PalmSystem.setWindowOrientation("free"), this.inherited(arguments), this.$.progress.$.bar.applyStyle("border-radius", "3px 3px 3px 3px"), this.timeStored = localStorage.getItem("timeStored");
 if (this.timeStored === null || this.timeStored === "") this.timeStored = "1200", localStorage.setItem("timeStored", this.timeStored);
 this.timeDefault = parseInt(this.timeStored), this.timeSet = this.timeDefault, this.theTime = this.timeDefault, this.displayTime(this.theTime), this.displayResized(), this.$.aboutPopup.setContent(document.getElementById("about").innerHTML);
 },
@@ -3627,10 +3627,14 @@ if (this.theTime === 0 && !this.overtime) return;
 switch (this.theState) {
 case this.states.stopped:
 case this.states.paused:
-this.theState = this.states.running, this.$.buttonStart.setContent("Pause"), this.buttonsOff(), this.timer = setInterval(this.updateTime.bind(this), this.timeOut);
+this.theState = this.states.running, this.$.buttonStart.setContent("Pause"), this.buttonsOff(), this.timer = setInterval(this.updateTime.bind(this), this.timeOut), window.PalmSystem && window.PalmSystem.setWindowProperties({
+blockScreenTimeout: !0
+});
 break;
 case this.states.running:
-clearInterval(this.timer), this.theState = this.states.paused, this.buttonsOn(), this.$.buttonStart.setContent("Start");
+clearInterval(this.timer), this.theState = this.states.paused, this.buttonsOn(), this.$.buttonStart.setContent("Start"), window.PalmSystem && window.PalmSystem.setWindowProperties({
+blockScreenTimeout: !1
+});
 }
 },
 updateTime: function() {
