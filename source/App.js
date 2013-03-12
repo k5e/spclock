@@ -44,6 +44,9 @@ enyo.kind({
 	barStyle: null,
 	
 	create: function() {
+		if(window.PalmSystem) {
+			window.PalmSystem.setWindowOrientation("free");
+		}
 		this.inherited(arguments);
 		this.$.progress.$.bar.applyStyle("border-radius", "3px 3px 3px 3px");
 		this.timeStored = localStorage.getItem("timeStored");
@@ -125,12 +128,18 @@ enyo.kind({
 			this.$.buttonStart.setContent("Pause");
 			this.buttonsOff();
 			this.timer = setInterval(this.updateTime.bind(this), this.timeOut);
+			if(window.PalmSystem) {
+				window.PalmSystem.setWindowProperties({"blockScreenTimeout":true});
+			}
 			break;
 		case this.states.running:
 			clearInterval(this.timer);
 			this.theState = this.states.paused;
 			this.buttonsOn();
 			this.$.buttonStart.setContent("Start");
+			if(window.PalmSystem) {
+				window.PalmSystem.setWindowProperties({"blockScreenTimeout":false});
+			}
 			break;
 		}
 	},
