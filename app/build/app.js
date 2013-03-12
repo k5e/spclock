@@ -3599,6 +3599,7 @@ timePercentGreen: 60,
 timePercentYellow: 80,
 timePercentRed: 95,
 barStyle: null,
+screenlock: null,
 create: function() {
 window.PalmSystem && window.PalmSystem.setWindowOrientation("free"), this.inherited(arguments), this.$.progress.$.bar.applyStyle("border-radius", "3px 3px 3px 3px"), this.timeStored = localStorage.getItem("timeStored");
 if (this.timeStored === null || this.timeStored === "") this.timeStored = "1200", localStorage.setItem("timeStored", this.timeStored);
@@ -3627,14 +3628,14 @@ if (this.theTime === 0 && !this.overtime) return;
 switch (this.theState) {
 case this.states.stopped:
 case this.states.paused:
-this.theState = this.states.running, this.$.buttonStart.setContent("Pause"), this.buttonsOff(), this.timer = setInterval(this.updateTime.bind(this), this.timeOut), window.PalmSystem && window.PalmSystem.setWindowProperties({
+this.theState = this.states.running, this.$.buttonStart.setContent("Pause"), this.buttonsOff(), this.timer = setInterval(this.updateTime.bind(this), this.timeOut), window.PalmSystem ? window.PalmSystem.setWindowProperties({
 blockScreenTimeout: !0
-});
+}) : this.screenlock = window.navigator.requestWakeLock("screen");
 break;
 case this.states.running:
-clearInterval(this.timer), this.theState = this.states.paused, this.buttonsOn(), this.$.buttonStart.setContent("Start"), window.PalmSystem && window.PalmSystem.setWindowProperties({
+clearInterval(this.timer), this.theState = this.states.paused, this.buttonsOn(), this.$.buttonStart.setContent("Start"), window.PalmSystem ? window.PalmSystem.setWindowProperties({
 blockScreenTimeout: !1
-});
+}) : this.screenlock.unlock();
 }
 },
 updateTime: function() {
