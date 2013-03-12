@@ -2,7 +2,7 @@
     "version": "1.0.3",
     "name": "SpeakerClock",
     "description": "A small countdown app that helps speakers to watch their time.",
-    "launch_path": "/index.html",
+    "launch_path": "/spclock/app/index.html",
     "icons": {
          "16": "/spclock/app/assets/icon-16.png",
          "30": "/spclock/app/assets/icon-30.png",
