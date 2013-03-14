@@ -21,9 +21,10 @@
     <preference name="fullscreen"       value="true" />
 
     <icon src="icon.png" />
-    <icon src="assets/icon-32.png"   gap:platform="android"    gap:density="ldpi" />
-    <icon src="assets/icon-32.png"   gap:platform="android"    gap:density="mdpi" />
-    <icon src="assets/icon-64.png"   gap:platform="android"    gap:density="hdpi" />
+    <icon src="assets/ldpi-icon-36.png"   gap:platform="android"    gap:density="ldpi" />
+    <icon src="assets/mdpi-icon-48.png"   gap:platform="android"    gap:density="mdpi" />
+    <icon src="assets/hdpi-icon-72.png"   gap:platform="android"    gap:density="hdpi" />
+    <icon src="assets/xhdpi-icon-96.png"   gap:platform="android"    gap:density="xhdpi" />
     <icon src="assets/icon-64.png"   gap:platform="webos" />
 
     <gap:splash src="assets/icon-256"  gap:platform="android" />
