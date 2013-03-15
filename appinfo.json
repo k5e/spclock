@@ -6,6 +6,6 @@
     "type": "web",
     "main": "index.html",
     "title": "Speaker's Clock",
-    "icon": "icon.png",
+    "icon": "assets/icon-128.png",
     "uiRevision": "2"
 }
