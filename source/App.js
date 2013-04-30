@@ -7,17 +7,21 @@ enyo.kind({
 		{kind: "onyx.Toolbar", layoutKind: "FittableColumnsLayout", components: [
 			{name: "appTitle", content: "Speaker's Clock"},
 			{fit: "true"},
-			{kind: "onyx.Button", name: "buttonAbout", content: "?", ontap: "aboutButton"}/*,
+			{kind: "onyx.Button", name: "buttonAbout", content: "?", ontap: "aboutButton"} /*,
 			{kind: "onyx.WebAppButton", alwaysShow: false, onInstallSuccess: "installSuccess", onInstallError: "installError", 
 				webAppUrl: "manifest.webapp"}*/
 		]},
 		{name: "timeDisplay", fit: true, classes: "time-display", allowHtml: true, onresize:"displayResized", ontap: "startClock"},
 		{kind: "onyx.ProgressBar", name: "progress", showStripes: false, classes: "app-progress-black", barClasses: "bar-color"},
 		{kind: "onyx.Toolbar", components: [
-			{kind: "onyx.Button", name: "buttonStart", content: "Start", ontap: "startClock"},
-			{kind: "onyx.Button", name: "buttonPlus", content: "+", ondown: "plusButtonDown", ontap: "plusButtonUp"},
-			{kind: "onyx.Button", name: "buttonMinus", content: "-", ondown: "minusButtonDown", ontap: "minusButtonUp"},
-			{kind: "onyx.Button", name: "buttonReset", content: "Reset", ontap: "resetClock"}
+			{name: "space0", allowHtml: true, content: "&nbsp;"},
+			{kind: "onyx.IconButton", name: "buttonStart", src: "assets/Play.png", ontap: "startClock"},
+			{name: "space1", allowHtml: true, content: "&nbsp;&nbsp;&nbsp;"},
+			{kind: "onyx.IconButton", name: "buttonPlus", src: "assets/Plus.png", ondown: "plusButtonDown", ontap: "plusButtonUp"},
+			{name: "space2", allowHtml: true, content: "&nbsp;"},
+			{kind: "onyx.IconButton", name: "buttonMinus", src: "assets/Minus.png", ondown: "minusButtonDown", ontap: "minusButtonUp"},
+			{name: "space3", allowHtml: true, content: "&nbsp;&nbsp;&nbsp;"},
+			{kind: "onyx.IconButton", name: "buttonReset", src: "assets/Reroute.png", ontap: "resetClock"}
 		]},
 		{kind: "onyx.Popup", name: "aboutPopup", allowHtml: "true", centered: true, floating: true, style: "background: #eee;color: black;padding: 3px; font-size: small;", content: "Popup...", ontap: "popupHide"},
 	],
@@ -126,7 +130,7 @@ enyo.kind({
 		// fallthrough
 		case this.states.paused:
 			this.theState = this.states.running;
-			this.$.buttonStart.setContent("Pause");
+			this.$.buttonStart.setSrc("assets/Pause.png");
 			this.buttonsOff();
 			this.timer = setInterval(this.updateTime.bind(this), this.timeOut);
 			if(window.PalmSystem) {
@@ -139,7 +143,7 @@ enyo.kind({
 			clearInterval(this.timer);
 			this.theState = this.states.paused;
 			this.buttonsOn();
-			this.$.buttonStart.setContent("Start");
+			this.$.buttonStart.setSrc("assets/Play.png");
 			if(window.PalmSystem) {
 				window.PalmSystem.setWindowProperties({"blockScreenTimeout":false});
 			} else {
@@ -161,7 +165,7 @@ enyo.kind({
 	stopTime: function() {
 		this.theState = this.states.stopped;
 		this.buttonsOn();
-		this.$.buttonStart.setContent("Start");
+		this.$.buttonStart.setSrc("assets/Play.png");
 	},
 	
 	buttonsOff: function() {
@@ -261,7 +265,7 @@ enyo.kind({
 		if(this.theState !== this.states.running) {
 			this.theTime = this.timeSet;
 			this.displayTime(this.theTime);
-			this.$.buttonStart.setContent("Start");
+			this.$.buttonStart.setSrc("assets/Play.png");
 			this.recoverFromOvertime();
 		}
 	},
@@ -283,11 +287,11 @@ enyo.kind({
 		var p;
 		if(m < 10) m = "0"+m;
 		if(s < 10) s = "0"+s;
-		this.$.timeDisplay.setContent(m + ":" + s);
 		if (!this.overtime && (this.theState === this.states.running)) {
 			p = 100 * (this.timeSet - t) / this.timeSet;
 			this.$.progress.animateProgressTo(p);
 		}
+		this.$.timeDisplay.setContent(m + ":" + s);
 	},
 /*	
 	installSuccess: function(response) {

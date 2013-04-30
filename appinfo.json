@@ -1,8 +1,8 @@
 {
     "id": "de.k5e.speakerclock",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "vendor": "Christian Knappke",
-    "vendorurl": "http://k5e.github.com/spclock",
+    "vendorurl": "http://k5e.github.io/spclock",
     "type": "web",
     "main": "index.html",
     "title": "Speaker's Clock",
