@@ -1,5 +1,5 @@
 {
-    "version": "1.0.4",
+    "version": "1.0.6",
     "name": "SpeakerClock",
     "description": "A small countdown app that helps speakers to watch their time.",
     "launch_path": "/spclock/app/index.html",
@@ -14,7 +14,7 @@
     },
     "developer": {
         "name": "Christian Knappke",
-        "url": "http://k5e.github.com/spclock"
+        "url": "http://k5e.github.io/spclock"
     },
     "default_locale": "en",
     "fullscreen": "true",

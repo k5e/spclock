@@ -3546,26 +3546,42 @@ barClasses: "bar-color"
 }, {
 kind: "onyx.Toolbar",
 components: [ {
-kind: "onyx.Button",
+name: "space0",
+allowHtml: !0,
+content: "&nbsp;"
+}, {
+kind: "onyx.IconButton",
 name: "buttonStart",
-content: "Start",
+src: "assets/Play.png",
 ontap: "startClock"
 }, {
-kind: "onyx.Button",
+name: "space1",
+allowHtml: !0,
+content: "&nbsp;&nbsp;&nbsp;"
+}, {
+kind: "onyx.IconButton",
 name: "buttonPlus",
-content: "+",
+src: "assets/Plus.png",
 ondown: "plusButtonDown",
 ontap: "plusButtonUp"
 }, {
-kind: "onyx.Button",
+name: "space2",
+allowHtml: !0,
+content: "&nbsp;"
+}, {
+kind: "onyx.IconButton",
 name: "buttonMinus",
-content: "-",
+src: "assets/Minus.png",
 ondown: "minusButtonDown",
 ontap: "minusButtonUp"
 }, {
-kind: "onyx.Button",
+name: "space3",
+allowHtml: !0,
+content: "&nbsp;&nbsp;&nbsp;"
+}, {
+kind: "onyx.IconButton",
 name: "buttonReset",
-content: "Reset",
+src: "assets/Reroute.png",
 ontap: "resetClock"
 } ]
 }, {
@@ -3628,12 +3644,12 @@ if (this.theTime === 0 && !this.overtime) return;
 switch (this.theState) {
 case this.states.stopped:
 case this.states.paused:
-this.theState = this.states.running, this.$.buttonStart.setContent("Pause"), this.buttonsOff(), this.timer = setInterval(this.updateTime.bind(this), this.timeOut), window.PalmSystem ? window.PalmSystem.setWindowProperties({
+this.theState = this.states.running, this.$.buttonStart.setSrc("assets/Pause.png"), this.buttonsOff(), this.timer = setInterval(this.updateTime.bind(this), this.timeOut), window.PalmSystem ? window.PalmSystem.setWindowProperties({
 blockScreenTimeout: !0
 }) : this.screenlock = window.navigator.requestWakeLock("screen");
 break;
 case this.states.running:
-clearInterval(this.timer), this.theState = this.states.paused, this.buttonsOn(), this.$.buttonStart.setContent("Start"), window.PalmSystem ? window.PalmSystem.setWindowProperties({
+clearInterval(this.timer), this.theState = this.states.paused, this.buttonsOn(), this.$.buttonStart.setSrc("assets/Play.png"), window.PalmSystem ? window.PalmSystem.setWindowProperties({
 blockScreenTimeout: !1
 }) : this.screenlock.unlock();
 }
@@ -3642,7 +3658,7 @@ updateTime: function() {
 this.theTime--, this.theTime < 0 && !this.overtime && (this.overtime = !0, this.$.timeDisplay.addClass("overtime")), this.displayTime(this.theTime);
 },
 stopTime: function() {
-this.theState = this.states.stopped, this.buttonsOn(), this.$.buttonStart.setContent("Start");
+this.theState = this.states.stopped, this.buttonsOn(), this.$.buttonStart.setSrc("assets/Play.png");
 },
 buttonsOff: function() {
 this.$.buttonPlus.hide(), this.$.buttonMinus.hide(), this.$.buttonReset.hide(), this.$.buttonAbout.disabled = !0;
@@ -3673,7 +3689,7 @@ this.theTime = Math.floor(this.theTime / 60) + t, this.theTime -= 1, this.theTim
 }
 },
 resetClock: function(e, t) {
-this.theState !== this.states.running && (this.theTime = this.timeSet, this.displayTime(this.theTime), this.$.buttonStart.setContent("Start"), this.recoverFromOvertime());
+this.theState !== this.states.running && (this.theTime = this.timeSet, this.displayTime(this.theTime), this.$.buttonStart.setSrc("assets/Play.png"), this.recoverFromOvertime());
 },
 recoverFromOvertime: function() {
 this.overtime = !1, this.$.timeDisplay.removeClass("overtime"), this.$.progress.animateProgressTo(0);
@@ -3681,6 +3697,6 @@ this.overtime = !1, this.$.timeDisplay.removeClass("overtime"), this.$.progress.
 displayTime: function(e) {
 e >= 0 ? this.progressChanged() : e *= -1;
 var t = Math.floor(e / 60), n = Math.floor(e % 60), r;
-t < 10 && (t = "0" + t), n < 10 && (n = "0" + n), this.$.timeDisplay.setContent(t + ":" + n), !this.overtime && this.theState === this.states.running && (r = 100 * (this.timeSet - e) / this.timeSet, this.$.progress.animateProgressTo(r));
+t < 10 && (t = "0" + t), n < 10 && (n = "0" + n), !this.overtime && this.theState === this.states.running && (r = 100 * (this.timeSet - e) / this.timeSet, this.$.progress.animateProgressTo(r)), this.$.timeDisplay.setContent(t + ":" + n);
 }
 });
