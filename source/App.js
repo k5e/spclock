@@ -62,8 +62,8 @@ enyo.kind({
 		this.timeDefault = parseInt(this.timeStored);
 		this.timeSet = this.timeDefault;
 		this.theTime = this.timeDefault;
-		this.displayTime(this.theTime);
 		this.displayResized();
+		this.displayTime(this.theTime);
 		this.$.aboutPopup.setContent(document.getElementById("about").innerHTML);
 	},
 
