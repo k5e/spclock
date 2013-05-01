@@ -3619,7 +3619,7 @@ screenlock: null,
 create: function() {
 window.PalmSystem && window.PalmSystem.setWindowOrientation("free"), this.inherited(arguments), this.$.progress.$.bar.applyStyle("border-radius", "3px 3px 3px 3px"), this.timeStored = localStorage.getItem("timeStored");
 if (this.timeStored === null || this.timeStored === "") this.timeStored = "1200", localStorage.setItem("timeStored", this.timeStored);
-this.timeDefault = parseInt(this.timeStored), this.timeSet = this.timeDefault, this.theTime = this.timeDefault, this.displayTime(this.theTime), this.displayResized(), this.$.aboutPopup.setContent(document.getElementById("about").innerHTML);
+this.timeDefault = parseInt(this.timeStored), this.timeSet = this.timeDefault, this.theTime = this.timeDefault, this.displayResized(), this.displayTime(this.theTime), this.$.aboutPopup.setContent(document.getElementById("about").innerHTML);
 },
 aboutButton: function(e, t) {
 this.$.aboutPopup.show(), setTimeout(this.popupHide.bind(this), 16383);
