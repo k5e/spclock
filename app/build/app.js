@@ -3699,4 +3699,4 @@ e >= 0 ? this.progressChanged() : e *= -1;
 var t = Math.floor(e / 60), n = Math.floor(e % 60), r;
 t < 10 && (t = "0" + t), n < 10 && (n = "0" + n), !this.overtime && this.theState === this.states.running && (r = 100 * (this.timeSet - e) / this.timeSet, this.$.progress.animateProgressTo(r)), this.$.timeDisplay.setContent(t + ":" + n);
 }
-});
+}), window.PalmSystem && window.PalmSystem.stageReady(), (new App).renderInto(document.body);
