@@ -303,3 +303,5 @@ enyo.kind({
 	}
 */	
 });
+if(window.PalmSystem) window.PalmSystem.stageReady();
+new App().renderInto(document.body);

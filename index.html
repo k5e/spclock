@@ -13,7 +13,6 @@
 		<link href="build/app.css" rel="stylesheet"/>
 		<!-- js -->
 		<script src="build/enyo.js"></script>
-		<script src="build/app.js"></script>
 	</head>
 	<body class="enyo-unselectable">
 		<div id="about">
@@ -28,9 +27,6 @@
 			</ul>
 			v.1.0.6 - Support: <a href="http://k5e.github.io/spclock">click/touch here</a>
 		</div>
-		<script>
-			if(window.PalmSystem) window.PalmSystem.stageReady();
-			new App().renderInto(document.body);
-		</script>
-	</body>
+		<script src="build/app.js"></script>
+		</body>
 </html>
