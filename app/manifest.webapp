@@ -18,6 +18,7 @@
     },
     "default_locale": "en",
     "fullscreen": "true",
-	"installs_allowed_from": ["*"],
-	"csp": "allow 'self'; img-src 'self'; script-src 'self'; style-src 'self';"
+    "orientation": ["portrait","landscape"],
+    "installs_allowed_from": ["*"],
+    "csp": "allow 'self'; img-src 'self'; script-src 'self'; style-src 'self';"
 }
